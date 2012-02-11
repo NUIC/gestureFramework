@@ -68,7 +68,15 @@ namespace KinectPoseDemo
             // Start the Kinect running and select the depth camera
             try
             {
-                kinect.SkeletonStream.Enable();
+                kinect.SkeletonStream.Enable(new TransformSmoothParameters{
+                    Smoothing = 0.1f,
+                    Correction = 0,
+                    Prediction = 0,
+                    JitterRadius = 1,
+                    MaxDeviationRadius = .5f
+
+
+                });
                 kinect.Start();
             }
             catch
@@ -92,7 +100,7 @@ namespace KinectPoseDemo
             
             frame.CopySkeletonDataTo(skeletons);
 
-            
+            frame.Dispose();
 
             
         }
