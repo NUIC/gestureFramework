@@ -1,6 +1,7 @@
 # Lists all of the folders/files to ignore in git repository
-
-HelloKinect/HelloKinect/HelloKinect/bin/			#ignore compiled files
-HelloKinect/HelloKinect/HelloKinect/obj/			#ignore compiled files
-HelloKinect/HelloKinect/HelloKinectContent/bin/	#ignore compiled files
-HelloKinect/HelloKinect/HelloKinectContent/obj/	#ignore compiled files
+# Ignore Compiled files
+*.exe
+HelloKinect/HelloKinect/HelloKinect/bin/
+HelloKinect/HelloKinect/HelloKinect/obj/
+HelloKinect/HelloKinect/HelloKinectContent/obj/
+HelloKinect/HelloKinect/HelloKinectContent/bin/
