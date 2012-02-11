@@ -1,0 +1,1 @@
+c:\users\admin\documents\visual studio 2010\Projects\KinectPoseDemo\KinectPoseDemo\KinectPoseDemoContent\obj\x86\Debug\ResolveAssemblyReference.cache

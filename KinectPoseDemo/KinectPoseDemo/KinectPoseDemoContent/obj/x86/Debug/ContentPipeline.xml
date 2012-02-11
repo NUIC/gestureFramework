@@ -1,0 +1,22 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<XnaContent xmlns:Pipeline="Microsoft.Xna.Framework.Content.Pipeline">
+  <Asset Type="Pipeline:BuildItemCollection">
+    <BuildSuccessful>true</BuildSuccessful>
+    <Settings>
+      <TargetPlatform>Windows</TargetPlatform>
+      <TargetProfile>Reach</TargetProfile>
+      <BuildConfiguration>Debug</BuildConfiguration>
+      <CompressContent>false</CompressContent>
+      <RootDirectory>c:\users\admin\documents\visual studio 2010\Projects\KinectPoseDemo\KinectPoseDemo\KinectPoseDemoContent\</RootDirectory>
+      <LoggerRootDirectory>c:\users\admin\documents\visual studio 2010\Projects\KinectPoseDemo\KinectPoseDemo\KinectPoseDemo\</LoggerRootDirectory>
+      <IntermediateDirectory>c:\users\admin\documents\visual studio 2010\Projects\KinectPoseDemo\KinectPoseDemo\KinectPoseDemoContent\obj\x86\Debug\</IntermediateDirectory>
+      <OutputDirectory>c:\users\admin\documents\visual studio 2010\Projects\KinectPoseDemo\KinectPoseDemo\KinectPoseDemo\bin\x86\Debug\Content\</OutputDirectory>
+    </Settings>
+    <Assemblies>
+      <Assembly>
+        <Key>C:\Windows\Microsoft.Net\assembly\GAC_32\Microsoft.Xna.Framework.Content.Pipeline\v4.0_4.0.0.0__842cf8be1de50553\Microsoft.Xna.Framework.Content.Pipeline.dll</Key>
+        <Value>2011-03-15T11:46:26.123031-04:00</Value>
+      </Assembly>
+    </Assemblies>
+  </Asset>
+</XnaContent>
