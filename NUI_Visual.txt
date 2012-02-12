@@ -1,0 +1,113 @@
+import check:
+
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Audio;
+using Microsoft.Xna.Framework.Content;
+using Microsoft.Xna.Framework.GamerServices;
+using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework.Input;
+using Microsoft.Xna.Framework.Media;
+using System.Text;
+using System.Runtime.InteropServices;
+using Microsoft.Kinect;
+using System.IO;
+
+
+
+
+
+1)under class before constructor
+		[DllImport("user32.dll", CharSet = CharSet.Auto)]
+        public static extern uint MessageBox(IntPtr hWnd, String text, String caption, uint type);
+		
+ Texture2D blank;
+ 
+ 
+ 2)inside load content
+			spriteBatch = new SpriteBatch(GraphicsDevice);
+            blank = new Texture2D(graphics.GraphicsDevice, 1, 1, false, SurfaceFormat.Color);
+            blank.SetData(new[] { Color.White });
+ 
+3)add this function
+ private void addLine(Joint joint, Joint joint_2)
+        {
+          
+            DrawLine(this.spriteBatch, blank, 3, Color.Yellow, new Vector2(joint.Position.X*(-150)+400, joint.Position.Y*(-150)+400), new Vector2(joint_2.Position.X*(-150)+400, joint_2.Position.Y*(-150)+400));
+            
+        }
+
+
+4) add this function
+void DrawLine(SpriteBatch batch, Texture2D blank,
+              float width, Color color, Vector2 point1, Vector2 point2)
+        {
+            float angle = (float)Math.Atan2(point2.Y - point1.Y, point2.X - point1.X);
+            float length = Vector2.Distance(point1, point2);
+            
+            batch.Draw(blank, point1, null, color,
+                       angle, Vector2.Zero, new Vector2(length, width),
+                       SpriteEffects.None, 0);
+            
+        }
+		
+
+ 5)add this function
+ 
+        void drawSkeleton(Skeleton skeleton)
+        {
+			spriteBatch.Begin();
+
+            if (skeleton.TrackingState == SkeletonTrackingState.Tracked)
+            {
+                Joint headJoint = skeleton.Joints[JointType.Head];
+                Joint hipCenter = skeleton.Joints[JointType.HipCenter];
+
+                if (headJoint.TrackingState != JointTrackingState.NotTracked)
+                {
+                    SkeletonPoint headPosition = headJoint.Position;
+
+                    //HeadPositionPrintline wrecks code efficiency!!!
+                    //Console.WriteLine(skeleton.Joints[JointType.Head].Position.Y);
+
+                    // Spine
+                    addLine(skeleton.Joints[JointType.Head], skeleton.Joints[JointType.ShoulderCenter]);
+                    addLine(skeleton.Joints[JointType.ShoulderCenter], skeleton.Joints[JointType.Spine]);
+
+                    // Left leg
+                    addLine(skeleton.Joints[JointType.Spine], skeleton.Joints[JointType.HipCenter]);
+                    addLine(skeleton.Joints[JointType.HipCenter], skeleton.Joints[JointType.HipLeft]);
+                    addLine(skeleton.Joints[JointType.HipLeft], skeleton.Joints[JointType.KneeLeft]);
+                    addLine(skeleton.Joints[JointType.KneeLeft], skeleton.Joints[JointType.AnkleLeft]);
+                    addLine(skeleton.Joints[JointType.AnkleLeft], skeleton.Joints[JointType.FootLeft]);
+
+                    // Right leg
+                    addLine(skeleton.Joints[JointType.HipCenter], skeleton.Joints[JointType.HipRight]);
+                    addLine(skeleton.Joints[JointType.HipRight], skeleton.Joints[JointType.KneeRight]);
+                    addLine(skeleton.Joints[JointType.KneeRight], skeleton.Joints[JointType.AnkleRight]);
+                    addLine(skeleton.Joints[JointType.AnkleRight], skeleton.Joints[JointType.FootRight]);
+
+                    // Left arm
+                    addLine(skeleton.Joints[JointType.ShoulderCenter], skeleton.Joints[JointType.ShoulderLeft]);
+                    addLine(skeleton.Joints[JointType.ShoulderLeft], skeleton.Joints[JointType.ElbowLeft]);
+                    addLine(skeleton.Joints[JointType.ElbowLeft], skeleton.Joints[JointType.WristLeft]);
+                    addLine(skeleton.Joints[JointType.WristLeft], skeleton.Joints[JointType.HandLeft]);
+
+                    // Right arm
+                    addLine(skeleton.Joints[JointType.ShoulderCenter], skeleton.Joints[JointType.ShoulderRight]);
+                    addLine(skeleton.Joints[JointType.ShoulderRight], skeleton.Joints[JointType.ElbowRight]);
+                    addLine(skeleton.Joints[JointType.ElbowRight], skeleton.Joints[JointType.WristRight]);
+                    addLine(skeleton.Joints[JointType.WristRight], skeleton.Joints[JointType.HandRight]);
+
+                }
+
+
+            }
+			spriteBatch.End();
+
+        }
+		
+
+	
