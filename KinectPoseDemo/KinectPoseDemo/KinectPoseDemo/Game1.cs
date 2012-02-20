@@ -18,6 +18,8 @@ using System.IO;
 
 namespace KinectPoseDemo
 {
+
+    public enum Poses { lefthandup, righthandup, handleft, handright, crouch }
     /// <summary>
     /// This is the main type for your game
     /// </summary>
@@ -32,12 +34,20 @@ namespace KinectPoseDemo
         Skeleton[] skeletons;
         //private EventHandler<SkeletonFrameReadyEventArgs> kinect_SkeletonFrameReady;
         Texture2D blank;
+        GestureModule gestureModule;
+
+        public static List<Poses> p = new List<Poses>();
+        String output = "";
+        SpriteFont Font1;
+        Vector2 FontPos;    
 
         public Game1()
         {
             graphics = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";
-           
+
+            gestureModule = new GestureModule();
+
             
         }
 
@@ -107,8 +117,8 @@ namespace KinectPoseDemo
 
         private void addLine(Joint joint, Joint joint_2)
         {
-          
-            DrawLine(this.spriteBatch, blank, 3, Color.Yellow, new Vector2(joint.Position.X*(-150)+400, joint.Position.Y*(-150)+400), new Vector2(joint_2.Position.X*(-150)+400, joint_2.Position.Y*(-150)+400));
+
+            DrawLine(this.spriteBatch, blank, 3, Color.Yellow, new Vector2(joint.Position.X * (150) + graphics.PreferredBackBufferWidth / 2, joint.Position.Y * (-150) + graphics.PreferredBackBufferHeight / 2), new Vector2(joint_2.Position.X * (150) + graphics.PreferredBackBufferWidth/2, joint_2.Position.Y * (-150) + graphics.PreferredBackBufferHeight/2));
             
         }
 
@@ -135,6 +145,12 @@ namespace KinectPoseDemo
             spriteBatch = new SpriteBatch(GraphicsDevice);
             blank = new Texture2D(graphics.GraphicsDevice, 1, 1, false, SurfaceFormat.Color);
             blank.SetData(new[] { Color.White });
+
+            // Create a new SpriteBatch, which can be used to draw textures.
+            Font1 = Content.Load<SpriteFont>("SpriteFont1");
+
+            // TODO: Load your game content here            
+            FontPos = new Vector2(100,100);
             // Create a new SpriteBatch, which can be used to draw textures.
             
 
@@ -161,6 +177,21 @@ namespace KinectPoseDemo
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed)
                 this.Exit();
 
+
+            if (p.Count != 0)
+            {
+
+                foreach (Poses pose in p)
+                {
+                    //Console.WriteLine(pose.ToString());
+                    output += pose.ToString();
+                    output += '\n'; 
+
+                }
+                
+                p.Clear();
+
+            }
             // TODO: Add your update logic here
 
             //SkeletonFrame frame = kinect_SkeletonFrameReady
@@ -169,6 +200,11 @@ namespace KinectPoseDemo
 
             base.Update(gameTime);
         }
+
+
+       
+
+        
 
         /// <summary>
         /// This is called when the game should draw itself.
@@ -183,50 +219,19 @@ namespace KinectPoseDemo
 
             foreach (Skeleton skeleton in skeletons)
             {
-               
-                if (skeleton.TrackingState == SkeletonTrackingState.Tracked)
-                {
-                    Joint headJoint = skeleton.Joints[JointType.Head];
-                    Joint hipCenter = skeleton.Joints[JointType.HipCenter];
 
-                    if (headJoint.TrackingState != JointTrackingState.NotTracked)
-                    {
-                        SkeletonPoint headPosition = headJoint.Position;
+                drawSkeleton(skeleton);
+                gestureModule.processSkeleton(skeleton);
 
-
-
-                        // Spine
-                        addLine(skeleton.Joints[JointType.Head], skeleton.Joints[JointType.ShoulderCenter]);
-                        addLine(skeleton.Joints[JointType.ShoulderCenter], skeleton.Joints[JointType.Spine]);
-
-                        // Left leg
-                        addLine(skeleton.Joints[JointType.Spine], skeleton.Joints[JointType.HipCenter]);
-                        addLine(skeleton.Joints[JointType.HipCenter], skeleton.Joints[JointType.HipLeft]);
-                        addLine(skeleton.Joints[JointType.HipLeft], skeleton.Joints[JointType.KneeLeft]);
-                        addLine(skeleton.Joints[JointType.KneeLeft], skeleton.Joints[JointType.AnkleLeft]);
-                        addLine(skeleton.Joints[JointType.AnkleLeft], skeleton.Joints[JointType.FootLeft]);
-
-                        // Right leg
-                        addLine(skeleton.Joints[JointType.HipCenter], skeleton.Joints[JointType.HipRight]);
-                        addLine(skeleton.Joints[JointType.HipRight], skeleton.Joints[JointType.KneeRight]);
-                        addLine(skeleton.Joints[JointType.KneeRight], skeleton.Joints[JointType.AnkleRight]);
-                        addLine(skeleton.Joints[JointType.AnkleRight], skeleton.Joints[JointType.FootRight]);
-
-                        // Left arm
-                        addLine(skeleton.Joints[JointType.ShoulderCenter], skeleton.Joints[JointType.ShoulderLeft]);
-                        addLine(skeleton.Joints[JointType.ShoulderLeft], skeleton.Joints[JointType.ElbowLeft]);
-                        addLine(skeleton.Joints[JointType.ElbowLeft], skeleton.Joints[JointType.WristLeft]);
-                        addLine(skeleton.Joints[JointType.WristLeft], skeleton.Joints[JointType.HandLeft]);
-
-                        // Right arm
-                        addLine(skeleton.Joints[JointType.ShoulderCenter], skeleton.Joints[JointType.ShoulderRight]);
-                        addLine(skeleton.Joints[JointType.ShoulderRight], skeleton.Joints[JointType.ElbowRight]);
-                        addLine(skeleton.Joints[JointType.ElbowRight], skeleton.Joints[JointType.WristRight]);
-                        addLine(skeleton.Joints[JointType.WristRight], skeleton.Joints[JointType.HandRight]);
-
-                    }
-                }
+                
             }
+
+            // Find the center of the string
+            Vector2 FontOrigin = Font1.MeasureString(output) / 2;
+            // Draw the string
+            spriteBatch.DrawString(Font1, output, FontPos, Color.LightGreen,
+                0, FontOrigin, 1.0f, SpriteEffects.None, 0.5f);
+            output = "";
             spriteBatch.End();
             // TODO: Add your drawing code here
 
@@ -234,10 +239,65 @@ namespace KinectPoseDemo
         }
 
 
-        
+
+        void drawSkeleton(Skeleton skeleton)
+        {
+
+            if (skeleton.TrackingState == SkeletonTrackingState.Tracked)
+            {
+                Joint headJoint = skeleton.Joints[JointType.Head];
+                Joint hipCenter = skeleton.Joints[JointType.HipCenter];
+
+                if (headJoint.TrackingState != JointTrackingState.NotTracked)
+                {
+                    SkeletonPoint headPosition = headJoint.Position;
+
+                    //HeadPositionPrintline wrecks code efficiency!!!
+                    //Console.WriteLine(skeleton.Joints[JointType.Head].Position.Y);
+
+                    // Spine
+                    addLine(skeleton.Joints[JointType.Head], skeleton.Joints[JointType.ShoulderCenter]);
+                    addLine(skeleton.Joints[JointType.ShoulderCenter], skeleton.Joints[JointType.Spine]);
+
+                    // Left leg
+                    addLine(skeleton.Joints[JointType.Spine], skeleton.Joints[JointType.HipCenter]);
+                    addLine(skeleton.Joints[JointType.HipCenter], skeleton.Joints[JointType.HipLeft]);
+                    addLine(skeleton.Joints[JointType.HipLeft], skeleton.Joints[JointType.KneeLeft]);
+                    addLine(skeleton.Joints[JointType.KneeLeft], skeleton.Joints[JointType.AnkleLeft]);
+                    addLine(skeleton.Joints[JointType.AnkleLeft], skeleton.Joints[JointType.FootLeft]);
+
+                    // Right leg
+                    addLine(skeleton.Joints[JointType.HipCenter], skeleton.Joints[JointType.HipRight]);
+                    addLine(skeleton.Joints[JointType.HipRight], skeleton.Joints[JointType.KneeRight]);
+                    addLine(skeleton.Joints[JointType.KneeRight], skeleton.Joints[JointType.AnkleRight]);
+                    addLine(skeleton.Joints[JointType.AnkleRight], skeleton.Joints[JointType.FootRight]);
+
+                    // Left arm
+                    addLine(skeleton.Joints[JointType.ShoulderCenter], skeleton.Joints[JointType.ShoulderLeft]);
+                    addLine(skeleton.Joints[JointType.ShoulderLeft], skeleton.Joints[JointType.ElbowLeft]);
+                    addLine(skeleton.Joints[JointType.ElbowLeft], skeleton.Joints[JointType.WristLeft]);
+                    addLine(skeleton.Joints[JointType.WristLeft], skeleton.Joints[JointType.HandLeft]);
+
+                    // Right arm
+                    addLine(skeleton.Joints[JointType.ShoulderCenter], skeleton.Joints[JointType.ShoulderRight]);
+                    addLine(skeleton.Joints[JointType.ShoulderRight], skeleton.Joints[JointType.ElbowRight]);
+                    addLine(skeleton.Joints[JointType.ElbowRight], skeleton.Joints[JointType.WristRight]);
+                    addLine(skeleton.Joints[JointType.WristRight], skeleton.Joints[JointType.HandRight]);
+
+                }
+
+
+            }
+
+
+        }
 
 
 
-        
+
+        internal static void addPose(Poses poseToAdd)
+        {
+           p.Add(poseToAdd);
+        }
     }
 }

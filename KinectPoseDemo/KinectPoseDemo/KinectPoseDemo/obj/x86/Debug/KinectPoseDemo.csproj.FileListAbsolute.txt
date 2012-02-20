@@ -4,3 +4,4 @@ c:\users\admin\documents\visual studio 2010\Projects\KinectPoseDemo\KinectPoseDe
 c:\users\admin\documents\visual studio 2010\Projects\KinectPoseDemo\KinectPoseDemo\KinectPoseDemo\bin\x86\Debug\KinectPoseDemo.pdb
 c:\users\admin\documents\visual studio 2010\Projects\KinectPoseDemo\KinectPoseDemo\KinectPoseDemo\obj\x86\Debug\KinectPoseDemo.exe
 c:\users\admin\documents\visual studio 2010\Projects\KinectPoseDemo\KinectPoseDemo\KinectPoseDemo\obj\x86\Debug\KinectPoseDemo.pdb
+C:\Users\admin\Documents\Visual Studio 2010\Projects\KinectPoseDemo\KinectPoseDemo\KinectPoseDemo\bin\x86\Debug\Content\SpriteFont1.xnb
